@@ -779,6 +779,11 @@ def csi_agc_adjust_fr_distance(csi_stack_time_series_amplitudes,csi_stack_time_s
     #gain per bins
     gain_arr_bins = []
 
+    #average rssi
+    rssi_arr_avg = []
+    rssi_arr_bins_avg = []
+
+
     csi_stack_time_series_magnitudes = np.zeros((csi_stack_time_series_amplitudes.shape[0], csi_stack_time_series_amplitudes.shape[1]))
 
 
@@ -800,7 +805,12 @@ def csi_agc_adjust_fr_distance(csi_stack_time_series_amplitudes,csi_stack_time_s
     
     gain_arr_bins = [float(x / num_carriers) for x in gain_arr]
 
-    return gain_arr, gain_arr_bins
+    #average rssi and rssi per bin
+    rssi_arr_avg = np.mean(rssi_arr)
+
+    rssi_arr_bins_avg = rssi_arr_avg / np.sqrt(csi_stack_time_series_amplitudes.shape[1])
+
+    return gain_arr, gain_arr_bins, rssi_arr_avg, rssi_arr_bins_avg
        
 
 
@@ -900,7 +910,7 @@ if __name__ == "__main__":
 
     num_carriers = int(input("enter the number of sub carriers (excluding null): "))
     
-    gain_arr, gain_arr_bins = csi_agc_adjust_fr_distance(amplitude_centrl_avg_null_pad_non_linear_rmvl,phases_centrl_avg_null_pad_non_linear_rmvl,rssi_arr, num_carriers)
+    gain_arr, gain_arr_bins, rssi_arr_avg, rssi_arr_bins_avg = csi_agc_adjust_fr_distance(amplitude_centrl_avg_null_pad_non_linear_rmvl,phases_centrl_avg_null_pad_non_linear_rmvl,rssi_arr, num_carriers)
 
     csi_stack_time_series_amplitudes_agc_adjst = csi_agc_adjust_stack(amplitude_centrl_avg_null_pad_non_linear_rmvl, gain_arr_bins)
 
@@ -970,7 +980,8 @@ if __name__ == "__main__":
     "gain_arr":gain_arr,"gain_arr_bins":gain_arr_bins,"csi_stack_time_series_amplitudes_agc_adjst":csi_stack_time_series_amplitudes_agc_adjst,
     "csi_stack_time_series_phases_agc_adjst":csi_stack_time_series_phases_agc_adjst,"time_domain_stack_abs":time_domain_stack_abs,
     "time_domain_stack_abs_avg": time_domain_stack_abs_avg,"time_domain_samples":time_domain_samples,
-    "phases_centrl_avg_null_pad_non_linear_rmvl": phases_centrl_avg_null_pad_non_linear_rmvl,"amplitude_centrl_avg_null_pad_non_linear_rmvl":amplitude_centrl_avg_null_pad_non_linear_rmvl }
+    "phases_centrl_avg_null_pad_non_linear_rmvl": phases_centrl_avg_null_pad_non_linear_rmvl,"amplitude_centrl_avg_null_pad_non_linear_rmvl":amplitude_centrl_avg_null_pad_non_linear_rmvl,
+     "rssi_arr": rssi_arr, "rssi_arr_avg": rssi_arr_avg,"rssi_arr_bins_avg" : rssi_arr_bins_avg}
     
     #return to directory of data_process
 
